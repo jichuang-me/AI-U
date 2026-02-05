@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+
+
 import MapContainer from './MapContainer';
 import TravelRecordsPanel from './TravelRecordsPanel';
 import { Map, FileText, Notebook, Image, Download, Share2, Grid, ListChecks, Calendar, Navigation, Zap, Clock, MapPin, ChevronLeft, ChevronRight, MoreHorizontal } from 'lucide-react';
 
-const Visualizer = ({ mode = 'map' }) => {
+const Visualizer = ({ mode = 'map', center }) => {
+
     const [currentView, setCurrentView] = useState(mode);
     const [isPanelVisible, setIsPanelVisible] = useState(true);
 
@@ -169,7 +172,8 @@ const Visualizer = ({ mode = 'map' }) => {
                         exit={{ opacity: 0 }}
                         style={{ width: '100%', height: '100%' }}
                     >
-                        <MapContainer />
+                        <MapContainer center={center} />
+
                     </motion.div>
                 ) : (
                     <motion.div
