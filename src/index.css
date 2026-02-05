@@ -1,0 +1,189 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
+  /* Color Palette */
+  --bg-color: #0c0c0e;
+  --surface-color: rgba(23, 23, 26, 0.7);
+  --accent-color: #6366f1;
+  --accent-hover: #4f46e5;
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.6);
+  --border-color: rgba(255, 255, 255, 0.1);
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.1);
+
+  /* Effects */
+  --blur: 20px;
+  --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.5);
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+}
+
+#root {
+  height: 100%;
+  width: 100%;
+}
+
+.app-root {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Main Workbench Layout - Flush Top Strategy */
+.workbench {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  grid-template-rows: 1fr;
+  width: 100vw;
+  height: 100vh;
+  /* Full height */
+  overflow: hidden;
+  position: relative;
+  background-color: var(--bg-color);
+}
+
+.side-panel {
+  height: 100%;
+  padding-top: 80px !important;
+  /* Side panels allow room for header */
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--border-color);
+  background: rgba(12, 12, 14, 0.4);
+  backdrop-filter: blur(40px);
+}
+
+.center-stage {
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding-bottom: 120px;
+  /* Safe area for MagicBox */
+}
+
+/* Three Core Result Modules Header */
+.result-header-summary {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  z-index: 150;
+  display: grid;
+  grid-template-columns: 1fr 1.2fr 1fr;
+  gap: 12px;
+  padding: 12px 24px;
+  background: linear-gradient(to bottom, rgba(12, 12, 14, 0.9) 0%, rgba(12, 12, 14, 0) 100%);
+  pointer-events: none;
+}
+
+.summary-module-item {
+  pointer-events: auto;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  padding: 8px 16px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.side-panel.right {
+  border-right: none;
+  border-left: 1px solid var(--border-color);
+}
+
+.center-stage {
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--blur));
+  -webkit-backdrop-filter: blur(var(--blur));
+  border: 1px solid var(--glass-border);
+}
+
+.glass-card {
+  background: var(--surface-color);
+  backdrop-filter: blur(var(--blur));
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  box-shadow: var(--shadow-lg);
+}
+
+/* Studio Mode Styles */
+.studio-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+  padding: 24px;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--glass-border);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}
+
+/* Animations */
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.5;
+  }
+
+  100% {
+    transform: scale(1.2);
+    opacity: 0;
+  }
+}
+
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}
