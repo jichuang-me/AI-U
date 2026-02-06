@@ -55,6 +55,49 @@ const TravelRecordsPanel = () => {
                 <h2 style={{ fontSize: '20px', fontWeight: 800, letterSpacing: '-0.02em' }}>旅行记忆库</h2>
             </div>
 
+            {/* Premium Passport Card */}
+            <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                whileHover={{ scale: 1.01 }}
+                className="glass-card"
+                style={{
+                    padding: '30px',
+                    borderRadius: '32px',
+                    background: 'linear-gradient(135deg, rgba(124, 58, 237, 0.1) 0%, rgba(79, 70, 229, 0.05) 100%)',
+                    border: '1px solid rgba(124, 58, 237, 0.2)',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    position: 'relative',
+                    overflow: 'hidden'
+                }}
+            >
+                <div style={{ position: 'absolute', top: '-50px', right: '-50px', width: '200px', height: '200px', background: 'radial-gradient(circle, rgba(124, 58, 237, 0.1) 0%, transparent 70%)' }} />
+
+                <div style={{ display: 'flex', gap: '40px', position: 'relative', zIndex: 1 }}>
+                    <div>
+                        <div style={{ fontSize: '11px', color: 'var(--accent-color)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px' }}>探索者等级</div>
+                        <div style={{ fontSize: '24px', fontWeight: 900, color: 'white' }}>GLO-TROTTER IV</div>
+                    </div>
+                    <div>
+                        <div style={{ fontSize: '11px', color: 'var(--text-secondary)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px' }}>已打卡国家/地区</div>
+                        <div style={{ fontSize: '24px', fontWeight: 900, color: 'white' }}>12 / 195</div>
+                    </div>
+                    <div>
+                        <div style={{ fontSize: '11px', color: 'var(--text-secondary)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px' }}>本年足迹里程</div>
+                        <div style={{ fontSize: '24px', fontWeight: 900, color: 'white' }}>14,582 KM</div>
+                    </div>
+                </div>
+
+                <div style={{ textAlign: 'right', position: 'relative', zIndex: 1 }}>
+                    <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: 'var(--accent-color)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 0 0 auto', boxShadow: '0 0 20px var(--accent-glow)' }}>
+                        <Share2 size={24} color="white" />
+                    </div>
+                    <div style={{ fontSize: '10px', color: 'var(--text-secondary)', marginTop: '8px', fontWeight: 600 }}>数字护照已同步</div>
+                </div>
+            </motion.div>
+
             <div style={{ display: 'flex', gap: '20px', overflowX: 'auto', paddingBottom: '16px', scrollbarWidth: 'none' }}>
                 {records.map((record) => (
                     <motion.div

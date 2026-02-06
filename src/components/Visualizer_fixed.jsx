@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 
@@ -11,26 +11,26 @@ const Visualizer = ({ mode = 'map', center = { lat: 34.992, lng: 135.772 } }) =>
     const [currentView, setCurrentView] = useState(mode);
     const [isPanelVisible, setIsPanelVisible] = useState(true);
 
-    // 模拟今日详细行程数据
+    // 妯℃嫙浠婃棩璇︾粏琛岀▼鏁版嵁
     const todaySteps = [
-        { time: '10:30', title: '出发：京都站', detail: '从中央口乘巴士', done: true },
-        { time: '11:15', title: '景点：清水寺', detail: '建议游玩 2 小时', current: true },
-        { time: '13:30', title: '美食：三年坂午餐', detail: '推荐尝试汤豆腐', done: false },
-        { time: '15:00', title: '景点：八坂神社', detail: '夕阳拍摄绝佳位', done: false }
+        { time: '10:30', title: '鍑哄彂锛氫含閮界珯', detail: '浠庝腑澶彛涔樺反澹?, done: true },
+        { time: '11:15', title: '鏅偣锛氭竻姘村', detail: '寤鸿娓哥帺 2 灏忔椂', current: true },
+        { time: '13:30', title: '缇庨锛氫笁骞村潅鍗堥', detail: '鎺ㄨ崘灏濊瘯姹よ眴鑵?, done: false },
+        { time: '15:00', title: '鏅偣锛氬叓鍧傜绀?, detail: '澶曢槼鎷嶆憚缁濅匠浣?, done: false }
     ];
 
     return (
         <div className="center-stage" style={{ position: 'relative', height: '100%' }}>
-            {/* 顶层透明 Overlay 层级 */}
+            {/* 椤跺眰閫忔槑 Overlay 灞傜骇 */}
 
-            {/* 4. 强制弹出的面板 (Managed by App and PlanningModal now) */}
+            {/* 4. 寮哄埗寮瑰嚭鐨勯潰鏉?(Managed by App and PlanningModal now) */}
             <AnimatePresence>
             </AnimatePresence>
 
-            {/* 1. 模式切换器 - 精致悬浮胶囊 */}
+            {/* 1. 妯″紡鍒囨崲鍣?- 绮捐嚧鎮诞鑳跺泭 */}
             <div style={{
                 position: 'absolute',
-                top: '80px',
+                top: '76px',
                 left: '50%',
                 transform: 'translateX(-50%)',
                 display: 'flex',
@@ -44,9 +44,53 @@ const Visualizer = ({ mode = 'map', center = { lat: 34.992, lng: 135.772 } }) =>
                 boxShadow: '0 8px 32px rgba(0,0,0,0.5)'
             }}>
                 {[
-                    { id: 'map', icon: <Map size={15} />, label: '全景地图' },
-                    { id: 'studio', icon: <Sparkles size={15} />, label: '创作模式' },
-                    { id: 'records', icon: <Notebook size={15} />, label: '足迹记录' }
+                    { id: 'map', icon: <Map size={15} />, label: '鍏ㄦ櫙鍦板浘' },
+                    { id: 'studio', icon: <Sparkles size={15} />, label: '鍒涗綔妯″紡' },
+                    { id: 'records', icon: <Notebook size={15} />, label: '瓒宠抗璁板綍' }
+                ].map(view => (
+                    <button
+                        key={view.id}
+                        onClick={() => setCurrentView(view.id)}
+                        style={{
+                            padding: '8px 16px',
+                            borderRadius: '12px',
+                            border: 'none',
+                            background: currentView === view.id ? 'var(--accent-color)' : 'transparent',
+                            color: currentView === view.id ? 'white' : 'rgba(255,255,255,0.4)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                            fontSize: '12px',
+                            fontWeight: 700,
+                            cursor: 'pointer',
+                            transition: 'var(--transition)',
+                            boxShadow: currentView === view.id ? '0 4px 15px var(--accent-glow)' : 'none'
+                        }}
+                    >
+                        {view.icon} {view.label}
+                    </button>
+                ))}
+            </div>
+            {/* 1. 妯″紡鍒囨崲鍣?- 绮捐嚧鎮诞鑳跺泭 */}
+            <div style={{
+                position: 'absolute',
+                top: '76px',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                display: 'flex',
+                gap: '4px',
+                zIndex: 2000,
+                padding: '4px',
+                background: 'rgba(5, 5, 8, 0.7)',
+                backdropFilter: 'blur(20px)',
+                borderRadius: '14px',
+                border: '1px solid rgba(255, 255, 255, 0.05)',
+                boxShadow: '0 8px 32px rgba(0,0,0,0.5)'
+            }}>
+                {[
+                    { id: 'map', icon: <Map size={15} />, label: '鍏ㄦ櫙鍦板浘' },
+                    { id: 'studio', icon: <Sparkles size={15} />, label: '鍒涗綔妯″紡' },
+                    { id: 'records', icon: <Notebook size={15} />, label: '瓒宠抗璁板綍' }
                 ].map(view => (
                     <button
                         key={view.id}
@@ -72,7 +116,7 @@ const Visualizer = ({ mode = 'map', center = { lat: 34.992, lng: 135.772 } }) =>
                 ))}
             </div>
 
-            {/* 2. 纵向悬浮面板 - 仅在地图模式显示 */}
+            {/* 2. 绾靛悜鎮诞闈㈡澘 - 浠呭湪鍦板浘妯″紡鏄剧ず */}
             <AnimatePresence>
                 {currentView === 'map' && (
                     <motion.div
@@ -88,7 +132,7 @@ const Visualizer = ({ mode = 'map', center = { lat: 34.992, lng: 135.772 } }) =>
                             pointerEvents: 'none'
                         }}
                     >
-                        {/* 面板内容主体 */}
+                        {/* 闈㈡澘鍐呭涓讳綋 */}
                         <div className="glass-card" style={{
                             padding: '24px',
                             background: 'rgba(5, 5, 6, 0.9)',
@@ -101,13 +145,13 @@ const Visualizer = ({ mode = 'map', center = { lat: 34.992, lng: 135.772 } }) =>
                             {/* Accent Line */}
                             <div className="premium-gradient" style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: '40%', height: '3px', borderRadius: '0 0 4px 4px' }} />
 
-                            {/* 标题 & 折叠按钮 */}
+                            {/* 鏍囬 & 鎶樺彔鎸夐挳 */}
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                                     <div style={{ background: 'rgba(124, 58, 237, 0.15)', padding: '6px', borderRadius: '8px' }}>
                                         <Calendar size={16} color="var(--accent-color)" />
                                     </div>
-                                    <span style={{ fontSize: '15px', fontWeight: 700, color: 'white' }}>今日实时行程</span>
+                                    <span style={{ fontSize: '15px', fontWeight: 700, color: 'white' }}>浠婃棩瀹炴椂琛岀▼</span>
                                 </div>
                                 <button
                                     onClick={() => setIsPanelVisible(false)}
@@ -119,7 +163,7 @@ const Visualizer = ({ mode = 'map', center = { lat: 34.992, lng: 135.772 } }) =>
                                 </button>
                             </div>
 
-                            {/* 步骤条内容 */}
+                            {/* 姝ラ鏉″唴瀹?*/}
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', position: 'relative' }}>
                                 <div style={{ position: 'absolute', left: '7px', top: '76px', bottom: '12px', width: '2px', background: 'rgba(255,255,255,0.05)' }} />
                                 {todaySteps.map((step, i) => (
@@ -142,14 +186,14 @@ const Visualizer = ({ mode = 'map', center = { lat: 34.992, lng: 135.772 } }) =>
                                 ))}
                             </div>
 
-                            {/* 底部快捷操作 */}
+                            {/* 搴曢儴蹇嵎鎿嶄綔 */}
                             <div style={{ marginTop: '24px', paddingTop: '20px', borderTop: '1px solid var(--border-color)', display: 'flex', gap: '10px' }}>
-                                <button style={{ flex: 1, background: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.2)', color: '#10b981', fontSize: '12px', fontWeight: 700, padding: '10px', borderRadius: '12px', cursor: 'pointer', transition: '0.2s' }} onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(16, 185, 129, 0.2)'} onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(16, 185, 129, 0.1)'}><Zap size={14} style={{ marginRight: '6px', verticalAlign: 'middle' }} />更轻松</button>
-                                <button style={{ flex: 1, background: 'rgba(255, 255, 255, 0.05)', border: '1px solid var(--border-color)', color: 'white', fontSize: '12px', fontWeight: 600, padding: '10px', borderRadius: '12px', cursor: 'pointer', transition: '0.2s' }} onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'} onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)'}>避雨方案</button>
+                                <button style={{ flex: 1, background: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.2)', color: '#10b981', fontSize: '12px', fontWeight: 700, padding: '10px', borderRadius: '12px', cursor: 'pointer', transition: '0.2s' }} onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(16, 185, 129, 0.2)'} onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(16, 185, 129, 0.1)'}><Zap size={14} style={{ marginRight: '6px', verticalAlign: 'middle' }} />鏇磋交鏉?/button>
+                                <button style={{ flex: 1, background: 'rgba(255, 255, 255, 0.05)', border: '1px solid var(--border-color)', color: 'white', fontSize: '12px', fontWeight: 600, padding: '10px', borderRadius: '12px', cursor: 'pointer', transition: '0.2s' }} onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)'} onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)'}>閬块洦鏂规</button>
                             </div>
                         </div>
 
-                        {/* 展开浮标 (当面板隐藏时显示) */}
+                        {/* 灞曞紑娴爣 (褰撻潰鏉块殣钘忔椂鏄剧ず) */}
                         <AnimatePresence>
                             {!isPanelVisible && (
                                 <motion.button
@@ -197,7 +241,7 @@ const Visualizer = ({ mode = 'map', center = { lat: 34.992, lng: 135.772 } }) =>
                     </motion.div>
                 ) : (
                     <motion.div
-                        key="currentView"
+                        key={currentView}
                         initial={{ opacity: 0, scale: 0.98 }}
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 1.02 }}
@@ -210,20 +254,20 @@ const Visualizer = ({ mode = 'map', center = { lat: 34.992, lng: 135.772 } }) =>
                                     {/* Studio Header */}
                                     <div style={{ textAlign: 'center', marginBottom: '40px' }}>
                                         <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }}>
-                                            <h2 style={{ fontSize: '32px', fontWeight: 900, letterSpacing: '-0.02em', marginBottom: '12px', background: 'linear-gradient(to right, #fff, rgba(255,255,255,0.7))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>灵感创作画布</h2>
-                                            <p style={{ color: 'var(--text-secondary)', fontSize: '16px' }}>汇聚全球旅行美学，激发下一次落笔的勇气</p>
+                                            <h2 style={{ fontSize: '32px', fontWeight: 900, letterSpacing: '-0.02em', marginBottom: '12px', background: 'linear-gradient(to right, #fff, rgba(255,255,255,0.7))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>鐏垫劅鍒涗綔鐢诲竷</h2>
+                                            <p style={{ color: 'var(--text-secondary)', fontSize: '16px' }}>姹囪仛鍏ㄧ悆鏃呰缇庡锛屾縺鍙戜笅涓€娆¤惤绗旂殑鍕囨皵</p>
                                         </motion.div>
                                     </div>
 
                                     {/* Canvas Grid - Enhanced UI */}
                                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '32px' }}>
                                         {[
-                                            { title: '京都·樱花落幕', color: '#fda4af', tag: '季节限定', img: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?q=80&w=800' },
-                                            { title: '屋之极简·和风', color: '#94a3b8', tag: '空间美学', img: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?q=80&w=800' },
-                                            { title: '深夜食堂·味蕾', color: '#fbbf24', tag: '城市探店', img: 'https://images.unsplash.com/photo-1580828343064-f641a1c6543b?q=80&w=800' },
-                                            { title: '极致效率·行者', color: '#818cf8', tag: 'AI 方案', img: 'https://images.unsplash.com/photo-1504109586057-7a2ae83d1338?q=80&w=800' },
-                                            { title: '山野呼吸·治愈', color: '#4ade80', tag: '深度户外', img: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=800' },
-                                            { title: '匠心传承·非遗', color: '#c084fc', tag: '文化导览', img: 'https://images.unsplash.com/photo-1582967788606-a171c1080cb0?q=80&w=800' }
+                                            { title: '浜兘路妯辫姳钀藉箷', color: '#fda4af', tag: '瀛ｈ妭闄愬畾', img: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?q=80&w=800' },
+                                            { title: '灞嬩箣鏋佺畝路鍜岄', color: '#94a3b8', tag: '绌洪棿缇庡', img: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?q=80&w=800' },
+                                            { title: '娣卞椋熷爞路鍛宠暰', color: '#fbbf24', tag: '鍩庡競鎺㈠簵', img: 'https://images.unsplash.com/photo-1580828343064-f641a1c6543b?q=80&w=800' },
+                                            { title: '鏋佽嚧鏁堢巼路琛岃€?, color: '#818cf8', tag: 'AI 鏂规', img: 'https://images.unsplash.com/photo-1504109586057-7a2ae83d1338?q=80&w=800' },
+                                            { title: '灞遍噹鍛煎惛路娌绘剤', color: '#4ade80', tag: '娣卞害鎴峰', img: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=800' },
+                                            { title: '鍖犲績浼犳壙路闈為仐', color: '#c084fc', tag: '鏂囧寲瀵艰', img: 'https://images.unsplash.com/photo-1582967788606-a171c1080cb0?q=80&w=800' }
                                         ].map((card, idx) => (
                                             <motion.div
                                                 key={idx}
@@ -277,9 +321,9 @@ const Visualizer = ({ mode = 'map', center = { lat: 34.992, lng: 135.772 } }) =>
                                                     </motion.div>
                                                     <h4 style={{ fontSize: '24px', fontWeight: 900, color: 'white', letterSpacing: '-0.02em', marginBottom: '8px' }}>{card.title}</h4>
                                                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: 'rgba(255,255,255,0.4)', fontWeight: 500 }}>
-                                                        <span>由 AI 协作生成</span>
+                                                        <span>鐢?AI 鍗忎綔鐢熸垚</span>
                                                         <div style={{ width: '3px', height: '3px', borderRadius: '50%', background: 'rgba(255,255,255,0.2)' }} />
-                                                        <span>探索灵感 →</span>
+                                                        <span>鎺㈢储鐏垫劅 鈫?/span>
                                                     </div>
                                                 </div>
 
@@ -310,3 +354,4 @@ const Visualizer = ({ mode = 'map', center = { lat: 34.992, lng: 135.772 } }) =>
 };
 
 export default Visualizer;
+
