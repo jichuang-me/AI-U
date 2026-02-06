@@ -18,6 +18,13 @@ const PlanningModal = ({ isOpen, onClose, scenario, activePlan, onUpdate }) => {
     const [resizeStart, setResizeStart] = useState({ x: 0, y: 0, width: 0, height: 0 });
     const modalRef = useRef(null);
 
+    // Sync formData with activePlan when it changes externally
+    useEffect(() => {
+        if (activePlan) {
+            setFormData(activePlan);
+        }
+    }, [activePlan]);
+
     // 拖动处理
     const handleDragStart = (e) => {
         if (e.target.closest('.modal-header')) {

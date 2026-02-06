@@ -44,55 +44,57 @@ const TravelRecordsPanel = () => {
 
     return (
         <div style={{
-            background: 'var(--surface-color)',
-            borderRadius: '16px',
-            padding: '24px',
+            background: 'transparent',
             height: '100%',
             display: 'flex',
             flexDirection: 'column',
-            gap: '20px'
+            gap: '30px'
         }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <FileText size={20} color="var(--accent-color)" />
-                <h2 style={{ fontSize: '16px', fontWeight: 600 }}>旅行记录</h2>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div className="premium-gradient" style={{ width: '6px', height: '20px', borderRadius: '3px' }} />
+                <h2 style={{ fontSize: '20px', fontWeight: 800, letterSpacing: '-0.02em' }}>旅行记忆库</h2>
             </div>
 
-            <div style={{ display: 'flex', gap: '16px', overflowX: 'auto', paddingBottom: '8px' }}>
+            <div style={{ display: 'flex', gap: '20px', overflowX: 'auto', paddingBottom: '16px', scrollbarWidth: 'none' }}>
                 {records.map((record) => (
                     <motion.div
                         key={record.id}
-                        whileHover={{ y: -4 }}
+                        whileHover={{ y: -8, scale: 1.02 }}
                         onClick={() => setSelectedRecord(record)}
                         className="glass"
                         style={{
-                            minWidth: '200px',
-                            padding: '16px',
-                            borderRadius: '12px',
+                            minWidth: '240px',
+                            padding: '24px',
+                            borderRadius: '24px',
                             cursor: 'pointer',
-                            border: selectedRecord?.id === record.id ? '2px solid var(--accent-color)' : '1px solid var(--glass-border)',
-                            transition: 'all 0.2s'
+                            border: selectedRecord?.id === record.id ? '1px solid var(--accent-color)' : '1px solid var(--border-color)',
+                            background: selectedRecord?.id === record.id ? 'rgba(124, 58, 237, 0.05)' : 'rgba(255,255,255,0.02)',
+                            transition: 'var(--transition)',
+                            boxShadow: selectedRecord?.id === record.id ? '0 10px 30px var(--accent-glow)' : 'var(--shadow-lg)'
                         }}
                     >
                         <div style={{
                             display: 'inline-block',
-                            padding: '4px 10px',
-                            background: record.status === '已完成' ? 'rgba(34, 197, 94, 0.1)' : 'rgba(99, 102, 241, 0.1)',
-                            color: record.status === '已完成' ? '#22c55e' : 'var(--accent-color)',
-                            borderRadius: '6px',
+                            padding: '6px 14px',
+                            background: record.status === '已完成' ? 'rgba(16, 185, 129, 0.15)' : 'rgba(124, 58, 237, 0.15)',
+                            color: record.status === '已完成' ? '#10b981' : 'var(--accent-color)',
+                            borderRadius: '10px',
                             fontSize: '11px',
-                            fontWeight: 500,
-                            marginBottom: '12px'
+                            fontWeight: 700,
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.05em',
+                            marginBottom: '16px'
                         }}>
                             {record.status}
                         </div>
-                        <h3 style={{ fontSize: '14px', fontWeight: 600, marginBottom: '8px' }}>{record.title}</h3>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '8px' }}>
-                            <Calendar size={12} />
+                        <h3 style={{ fontSize: '16px', fontWeight: 800, marginBottom: '10px', color: 'white' }}>{record.title}</h3>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 500, marginBottom: '16px' }}>
+                            <Calendar size={14} color="var(--accent-color)" />
                             {record.date}
                         </div>
-                        <div style={{ display: 'flex', gap: '4px', fontSize: '20px' }}>
+                        <div style={{ display: 'flex', gap: '8px', fontSize: '24px' }}>
                             {record.images.map((img, idx) => (
-                                <span key={idx}>{img}</span>
+                                <div key={idx} style={{ background: 'rgba(255,255,255,0.05)', padding: '6px', borderRadius: '12px' }}>{img}</div>
                             ))}
                         </div>
                     </motion.div>
@@ -103,95 +105,114 @@ const TravelRecordsPanel = () => {
                 {selectedRecord && (
                     <motion.div
                         key={selectedRecord.id}
-                        initial={{ opacity: 0, y: 20 }}
+                        initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -20 }}
-                        className="glass"
+                        exit={{ opacity: 0, y: -30 }}
                         style={{
-                            padding: '20px',
-                            borderRadius: '12px',
+                            padding: '32px',
+                            borderRadius: '32px',
                             flex: 1,
-                            overflowY: 'auto'
+                            overflowY: 'auto',
+                            background: 'rgba(5, 5, 6, 0.4)',
+                            border: '1px solid var(--border-color)',
+                            backdropFilter: 'blur(40px)',
+                            boxShadow: '0 40px 80px rgba(0,0,0,0.4)'
                         }}
                     >
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '20px' }}>
-                            <div>
-                                <h3 style={{ fontSize: '18px', fontWeight: 600, marginBottom: '8px' }}>{selectedRecord.title}</h3>
-                                <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '32px' }}>
+                            <div style={{ flex: 1, paddingRight: '40px' }}>
+                                <h3 style={{ fontSize: '28px', fontWeight: 900, marginBottom: '12px', color: 'white', letterSpacing: '-0.02em' }}>{selectedRecord.title}</h3>
+                                <p style={{ fontSize: '15px', color: 'var(--text-secondary)', lineHeight: 1.8, maxWidth: '800px' }}>
                                     {selectedRecord.summary}
                                 </p>
                             </div>
-                            <div style={{ display: 'flex', gap: '8px' }}>
+                            <div style={{ display: 'flex', gap: '12px' }}>
                                 <button
-                                    className="glass"
                                     style={{
-                                        padding: '8px 12px',
-                                        borderRadius: '8px',
+                                        padding: '12px 20px',
+                                        borderRadius: '14px',
                                         display: 'flex',
                                         alignItems: 'center',
-                                        gap: '6px',
-                                        fontSize: '12px',
+                                        gap: '8px',
+                                        fontSize: '13px',
+                                        fontWeight: 700,
                                         cursor: 'pointer',
-                                        border: 'none',
-                                        color: 'white'
+                                        border: '1px solid var(--border-color)',
+                                        background: 'rgba(255,255,255,0.05)',
+                                        color: 'white',
+                                        transition: '0.2s'
                                     }}
+                                    onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.1)'}
+                                    onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}
                                 >
-                                    <Download size={14} />
-                                    导出
+                                    <Download size={16} />
+                                    PDF 导出
                                 </button>
                                 <button
-                                    className="glass"
                                     style={{
-                                        padding: '8px 12px',
-                                        borderRadius: '8px',
+                                        padding: '12px 20px',
+                                        borderRadius: '14px',
                                         display: 'flex',
                                         alignItems: 'center',
-                                        gap: '6px',
-                                        fontSize: '12px',
+                                        gap: '8px',
+                                        fontSize: '13px',
+                                        fontWeight: 700,
                                         cursor: 'pointer',
                                         border: 'none',
-                                        color: 'white'
+                                        background: 'var(--accent-color)',
+                                        color: 'white',
+                                        transition: '0.2s',
+                                        boxShadow: '0 4px 15px var(--accent-glow)'
                                     }}
+                                    onMouseEnter={(e) => e.currentTarget.style.filter = 'brightness(1.1)'}
+                                    onMouseLeave={(e) => e.currentTarget.style.filter = 'brightness(1)'}
                                 >
-                                    <Share2 size={14} />
-                                    分享
+                                    <Share2 size={16} />
+                                    分享广场
                                 </button>
                             </div>
                         </div>
 
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '20px' }}>
-                            <div className="glass" style={{ padding: '16px', borderRadius: '10px' }}>
-                                <div style={{ fontSize: '11px', color: 'var(--text-secondary)', marginBottom: '6px' }}>预算</div>
-                                <div style={{ fontSize: '20px', fontWeight: 600, color: 'var(--accent-color)' }}>
-                                    ¥ {selectedRecord.budget.toLocaleString()}
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', marginBottom: '32px' }}>
+                            <div style={{ padding: '24px', borderRadius: '24px', background: 'rgba(124, 58, 237, 0.1)', border: '1px solid rgba(124, 58, 237, 0.2)' }}>
+                                <div style={{ fontSize: '12px', color: 'var(--accent-color)', marginBottom: '8px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>预期预算</div>
+                                <div style={{ fontSize: '32px', fontWeight: 900, color: 'white' }}>
+                                    ¥{selectedRecord.budget.toLocaleString()}
                                 </div>
                             </div>
-                            <div className="glass" style={{ padding: '16px', borderRadius: '10px' }}>
-                                <div style={{ fontSize: '11px', color: 'var(--text-secondary)', marginBottom: '6px' }}>
+                            <div style={{ padding: '24px', borderRadius: '24px', background: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.2)' }}>
+                                <div style={{ fontSize: '12px', color: '#10b981', marginBottom: '8px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                                     {selectedRecord.status === '已完成' ? '实际花费' : '预计花费'}
                                 </div>
-                                <div style={{ fontSize: '20px', fontWeight: 600, color: selectedRecord.actual > 0 ? '#22c55e' : 'var(--text-secondary)' }}>
-                                    {selectedRecord.actual > 0 ? `¥ ${selectedRecord.actual.toLocaleString()}` : '待统计'}
+                                <div style={{ fontSize: '32px', fontWeight: 900, color: 'white' }}>
+                                    {selectedRecord.actual > 0 ? `¥${selectedRecord.actual.toLocaleString()}` : '计算中...'}
                                 </div>
                             </div>
                         </div>
 
                         <div>
-                            <div style={{ fontSize: '13px', fontWeight: 600, marginBottom: '12px', color: 'var(--text-secondary)' }}>
-                                <MapPin size={14} style={{ display: 'inline', marginRight: '6px' }} />
-                                行程亮点
+                            <div style={{ fontSize: '14px', fontWeight: 700, marginBottom: '16px', color: 'white', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <div style={{ background: 'rgba(124, 58, 237, 0.1)', padding: '6px', borderRadius: '8px' }}>
+                                    <MapPin size={16} color="var(--accent-color)" />
+                                </div>
+                                行程亮点记录
                             </div>
-                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '12px' }}>
                                 {selectedRecord.highlights.map((highlight, idx) => (
                                     <span
                                         key={idx}
                                         style={{
-                                            padding: '6px 12px',
-                                            background: 'rgba(99, 102, 241, 0.1)',
-                                            borderRadius: '8px',
-                                            fontSize: '12px',
-                                            color: 'var(--accent-color)'
+                                            padding: '8px 16px',
+                                            background: 'rgba(255,255,255,0.03)',
+                                            border: '1px solid var(--border-color)',
+                                            borderRadius: '12px',
+                                            fontSize: '13px',
+                                            fontWeight: 600,
+                                            color: 'rgba(255,255,255,0.8)',
+                                            transition: '0.2s'
                                         }}
+                                        onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--accent-color)'; e.currentTarget.style.color = 'white'; }}
+                                        onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border-color)'; e.currentTarget.style.color = 'rgba(255,255,255,0.8)'; }}
                                     >
                                         {highlight}
                                     </span>

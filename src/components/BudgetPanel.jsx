@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Wallet, TrendingUp, GripVertical, Lightbulb, ChevronDown, ChevronUp } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Wallet, TrendingUp, Lightbulb, ChevronDown, ChevronUp } from 'lucide-react';
 
 const BudgetPanel = ({ activePlan, isOpen = true, onToggle, width = 300, onResize }) => {
     const [isResizing, setIsResizing] = useState(false);
@@ -109,31 +109,52 @@ const BudgetPanel = ({ activePlan, isOpen = true, onToggle, width = 300, onResiz
         }
     };
 
-    // 计算总计
-    const calculateTotals = () => {
-        let totalBudget = 0;
-        let totalActual = 0;
+    // Calculate dynamic budget based on activePlan
+    const calculateDynamicTotals = () => {
+        const days = activePlan?.days || 5;
+        const tier = activePlan?.hotelTier || '精品';
 
-        Object.values(budgetData).forEach(category => {
-            category.items.forEach(item => {
-                totalBudget += item.budget;
-                totalActual += item.actual;
-            });
-        });
+        // Price per night based on tier - synced with LedgerPanel logic
+        const hotelPriceMap = { '奢华': 2800, '精品': 1200, '经济': 600 };
+        const foodPriceMap = { '奢华': 800, '精品': 400, '经济': 200 };
 
-        return { totalBudget, totalActual };
+        const accommodationTotal = hotelPriceMap[tier] * days;
+        const foodTotal = foodPriceMap[tier] * days;
+        const transportTotal = days * 200; // Average base
+        const activityTotal = days * 150; // Average base
+
+        const totalBudget = accommodationTotal + foodTotal + transportTotal + activityTotal;
+        // Mock actual as slightly less than budget for premium positive feedback
+        const totalActual = Math.floor(totalBudget * 0.92);
+
+        return {
+            totalBudget,
+            totalActual,
+            accommodationTotal,
+            foodTotal,
+            transportTotal,
+            activityTotal
+        };
     };
 
-    const { totalBudget, totalActual } = calculateTotals();
+    const {
+        totalBudget,
+        totalActual,
+        accommodationTotal,
+        foodTotal,
+        transportTotal,
+        activityTotal
+    } = calculateDynamicTotals();
+
     const savings = totalBudget - totalActual;
     const savingsPercent = ((savings / totalBudget) * 100).toFixed(1);
 
-    // 优化建议
+    // Optimized suggestions based on current plan
     const suggestions = [
-        '选择周二入住可节省 ¥200',
-        '提前30天预订机票可节省15%',
-        '使用信用卡积分兑换酒店',
-        '避开节假日高峰期出行'
+        activePlan?.hotelTier === '奢华' ? '选择精品酒店可节省 ¥' + ((2800 - 1200) * (activePlan?.days || 5)).toLocaleString() : '当前酒店方案已是平衡首选',
+        '选择周二入住可额外节省约 ¥200',
+        '提前30天预订热门餐厅可避免排队费',
+        '使用 JR Pass 周游券可覆盖 80% 交通费'
     ];
 
     return (
@@ -142,12 +163,12 @@ const BudgetPanel = ({ activePlan, isOpen = true, onToggle, width = 300, onResiz
             className="side-panel right"
             initial={false}
             animate={{
-                width: isOpen ? `${width}px` : '60px',
-                minWidth: isOpen ? `${width}px` : '60px',
+                width: isOpen ? `${width}px` : '70px',
+                minWidth: isOpen ? `${width}px` : '70px',
                 padding: isOpen ? '24px' : '12px'
             }}
-            transition={{ duration: 0.3, ease: 'easeInOut' }}
-            style={{ position: 'relative', overflow: 'hidden' }}
+            transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
+            style={{ position: 'relative', overflow: 'hidden', borderLeft: '1px solid var(--border-color)', background: 'rgba(5, 5, 6, 0.6)', backdropFilter: 'blur(40px)' }}
         >
             {isOpen ? (
                 <>
@@ -159,134 +180,126 @@ const BudgetPanel = ({ activePlan, isOpen = true, onToggle, width = 300, onResiz
                             left: 0,
                             top: 0,
                             bottom: 0,
-                            width: '8px',
+                            width: '4px',
                             cursor: 'ew-resize',
                             zIndex: 100,
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            background: isResizing ? 'rgba(99, 102, 241, 0.1)' : 'transparent',
-                            transition: 'background 0.2s'
+                            transition: '0.2s'
                         }}
-                        onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(99, 102, 241, 0.05)'}
-                        onMouseLeave={(e) => !isResizing && (e.currentTarget.style.background = 'transparent')}
-                    >
-                        <GripVertical size={14} color="var(--glass-border)" style={{ opacity: isResizing ? 1 : 0.3 }} />
-                    </div>
+                        onMouseEnter={(e) => e.currentTarget.style.background = 'var(--accent-color)'}
+                        onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                    />
 
                     {/* Header */}
-                    <div
-                        onClick={onToggle}
-                        style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '8px',
-                            marginBottom: '20px',
-                            cursor: 'pointer',
-                            padding: '8px',
-                            margin: '-8px -8px 12px -8px',
-                            borderRadius: '8px',
-                            transition: 'background 0.2s'
-                        }}
-                        onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.03)'}
-                        onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
-                    >
-                        <Wallet size={18} color="var(--accent-color)" />
-                        <h3 style={{ fontSize: '14px', fontWeight: 600, letterSpacing: '0.05em', color: 'var(--text-secondary)' }}>账本</h3>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <div className="premium-gradient" style={{ width: '4px', height: '14px', borderRadius: '2px' }} />
+                            <h3 style={{ fontSize: '15px', fontWeight: 700, letterSpacing: '-0.01em' }}>财务预算</h3>
+                        </div>
+                        <button onClick={onToggle} style={{ background: 'rgba(255,255,255,0.05)', border: 'none', color: 'rgba(255,255,255,0.4)', padding: '6px', borderRadius: '8px', cursor: 'pointer' }}><Wallet size={14} /></button>
                     </div>
 
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', overflowY: 'auto', flex: 1 }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', overflowY: 'auto', flex: 1, paddingRight: '4px' }}>
                         {/* 总览卡片 */}
-                        <div className="glass" style={{ padding: '16px', borderRadius: '12px', background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.1), transparent)' }}>
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '10px' }}>
+                        <div className="glass-card" style={{ padding: '20px', borderRadius: '20px', background: 'linear-gradient(135deg, rgba(124, 58, 237, 0.15) 0%, rgba(79, 70, 229, 0.05) 100%)', border: '1px solid rgba(124, 58, 237, 0.2)' }}>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '16px' }}>
                                 <div>
-                                    <div style={{ fontSize: '10px', color: 'var(--text-secondary)', marginBottom: '4px' }}>预算</div>
-                                    <div style={{ fontSize: '18px', fontWeight: 700 }}>¥{totalBudget.toLocaleString()}</div>
+                                    <div style={{ fontSize: '11px', color: 'var(--text-secondary)', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>预期总额</div>
+                                    <div style={{ fontSize: '20px', fontWeight: 800, color: 'white' }}>¥{totalBudget.toLocaleString()}</div>
                                 </div>
                                 <div>
-                                    <div style={{ fontSize: '10px', color: 'var(--text-secondary)', marginBottom: '4px' }}>实际</div>
-                                    <div style={{ fontSize: '18px', fontWeight: 700, color: '#22c55e' }}>¥{totalActual.toLocaleString()}</div>
+                                    <div style={{ fontSize: '11px', color: 'var(--text-secondary)', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>实时结算</div>
+                                    <div style={{ fontSize: '20px', fontWeight: 800, color: '#10b981' }}>¥{totalActual.toLocaleString()}</div>
                                 </div>
                             </div>
-                            <div style={{ padding: '6px 10px', background: 'rgba(34, 197, 94, 0.1)', borderRadius: '6px', fontSize: '11px', color: '#22c55e', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                                <TrendingUp size={12} />
-                                已节省 ¥{savings.toLocaleString()} ({savingsPercent}%)
+                            <div style={{ padding: '8px 12px', background: 'rgba(16, 185, 129, 0.1)', borderRadius: '10px', fontSize: '12px', color: '#10b981', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 600 }}>
+                                <TrendingUp size={14} />
+                                节省 ¥{savings.toLocaleString()} ({savingsPercent}%)
                             </div>
                         </div>
 
                         {/* 详细分类 */}
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                             {Object.entries(budgetData).map(([key, category]) => {
-                                const categoryBudget = category.items.reduce((sum, item) => sum + item.budget, 0);
-                                const categoryActual = category.items.reduce((sum, item) => sum + item.actual, 0);
                                 const isExpanded = expandedCategory === key;
+                                const currentAmount =
+                                    key === 'accommodation' ? accommodationTotal :
+                                        key === 'dining' ? foodTotal :
+                                            key === 'transportation' ? transportTotal :
+                                                (activityTotal / 3); // Split remaining activities
 
                                 return (
-                                    <div key={key} className="glass" style={{ borderRadius: '10px', overflow: 'hidden' }}>
+                                    <div key={key} style={{ borderRadius: '16px', overflow: 'hidden', border: '1px solid var(--border-color)', transition: 'var(--transition)', background: isExpanded ? 'rgba(255,255,255,0.03)' : 'transparent' }}>
                                         {/* Category Header */}
                                         <div
                                             onClick={() => setExpandedCategory(isExpanded ? null : key)}
                                             style={{
-                                                padding: '12px',
+                                                padding: '14px',
                                                 cursor: 'pointer',
                                                 display: 'flex',
                                                 alignItems: 'center',
-                                                gap: '8px',
-                                                transition: 'background 0.2s'
+                                                gap: '12px',
                                             }}
-                                            onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.03)'}
-                                            onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
+                                            onMouseEnter={(e) => { if (!isExpanded) e.currentTarget.style.background = 'rgba(255,255,255,0.03)'; }}
+                                            onMouseLeave={(e) => { if (!isExpanded) e.currentTarget.style.background = 'transparent'; }}
                                         >
-                                            <span style={{ fontSize: '18px' }}>{category.icon}</span>
+                                            <div style={{ fontSize: '20px', width: '36px', height: '36px', borderRadius: '10px', background: 'rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{category.icon}</div>
                                             <div style={{ flex: 1 }}>
-                                                <div style={{ fontSize: '12px', fontWeight: 500, marginBottom: '4px' }}>{category.category}</div>
-                                                <div style={{ fontSize: '10px', color: 'var(--text-secondary)' }}>
-                                                    ¥{categoryActual.toLocaleString()} / ¥{categoryBudget.toLocaleString()}
+                                                <div style={{ fontSize: '13px', fontWeight: 700, marginBottom: '2px', color: 'white' }}>{category.category}</div>
+                                                <div style={{ fontSize: '11px', color: 'var(--text-secondary)', fontWeight: 500 }}>
+                                                    ¥{currentAmount.toLocaleString()} <span style={{ opacity: 0.3 }}>/</span> ¥{currentAmount.toLocaleString()}
                                                 </div>
                                             </div>
-                                            {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                                            <div style={{ color: 'rgba(255,255,255,0.2)' }}>{isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}</div>
                                         </div>
 
                                         {/* Category Items */}
-                                        {isExpanded && (
-                                            <div style={{ borderTop: '1px solid var(--glass-border)', padding: '8px 12px', background: 'rgba(0,0,0,0.2)' }}>
-                                                {category.items.map((item, idx) => (
-                                                    <div key={idx} style={{ padding: '8px 0', borderBottom: idx < category.items.length - 1 ? '1px solid rgba(255,255,255,0.05)' : 'none' }}>
-                                                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                                                            <span style={{ fontSize: '11px' }}>{item.name}</span>
-                                                            {item.note && <span style={{ fontSize: '10px', color: '#22c55e' }}>{item.note}</span>}
-                                                        </div>
-                                                        <div style={{ display: 'flex', gap: '8px', fontSize: '10px' }}>
-                                                            <span style={{ color: 'var(--text-secondary)' }}>预算: ¥{item.budget}</span>
-                                                            <span style={{ color: item.actual <= item.budget ? '#22c55e' : '#ef4444' }}>
-                                                                实际: ¥{item.actual}
-                                                            </span>
-                                                        </div>
+                                        <AnimatePresence>
+                                            {isExpanded && (
+                                                <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} style={{ overflow: 'hidden' }}>
+                                                    <div style={{ borderTop: '1px solid var(--border-color)', padding: '12px 14px', background: 'rgba(0,0,0,0.15)' }}>
+                                                        {category.items.map((item, idx) => (
+                                                            <div key={idx} style={{ padding: '10px 0', borderBottom: idx < category.items.length - 1 ? '1px solid rgba(255,255,255,0.03)' : 'none' }}>
+                                                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px', alignItems: 'center' }}>
+                                                                    <span style={{ fontSize: '12px', fontWeight: 500, color: 'rgba(255,255,255,0.9)' }}>{item.name}</span>
+                                                                    {item.note && <span style={{ fontSize: '10px', color: '#10b981', background: 'rgba(16, 185, 129, 0.1)', padding: '2px 6px', borderRadius: '4px' }}>{item.note}</span>}
+                                                                </div>
+                                                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                                    <div style={{ display: 'flex', gap: '8px', fontSize: '10px', color: 'rgba(255,255,255,0.4)' }}>
+                                                                        <span>预算: ¥{item.budget}</span>
+                                                                    </div>
+                                                                    <span style={{ fontSize: '12px', fontWeight: 700, color: item.actual <= item.budget ? '#10b981' : '#ef4444' }}>
+                                                                        ¥{item.actual}
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        ))}
                                                     </div>
-                                                ))}
-                                            </div>
-                                        )}
+                                                </motion.div>
+                                            )}
+                                        </AnimatePresence>
                                     </div>
                                 );
                             })}
                         </div>
 
                         {/* 优化建议 */}
-                        <div className="glass" style={{ padding: '14px', borderRadius: '10px', border: '1px solid rgba(99, 102, 241, 0.2)' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '10px' }}>
-                                <Lightbulb size={14} color="var(--accent-color)" />
-                                <span style={{ fontSize: '11px', fontWeight: 600, color: 'var(--accent-color)' }}>优化建议</span>
+                        <div style={{ padding: '16px', borderRadius: '16px', border: '1px dashed rgba(124, 58, 237, 0.3)', background: 'rgba(124, 58, 237, 0.03)' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+                                <div style={{ padding: '4px', background: 'rgba(124, 58, 237, 0.1)', borderRadius: '6px' }}>
+                                    <Lightbulb size={14} color="var(--accent-color)" />
+                                </div>
+                                <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--accent-color)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>AI 优化建议</span>
                             </div>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                                 {suggestions.map((suggestion, idx) => (
                                     <div key={idx} style={{
-                                        fontSize: '10px',
+                                        fontSize: '11px',
                                         color: 'var(--text-secondary)',
-                                        lineHeight: 1.4,
-                                        paddingLeft: '10px',
-                                        position: 'relative'
+                                        lineHeight: 1.5,
+                                        display: 'flex',
+                                        gap: '8px'
                                     }}>
-                                        <span style={{ position: 'absolute', left: 0, color: 'var(--accent-color)' }}>•</span>
+                                        <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: 'var(--accent-color)', marginTop: '6px', flexShrink: 0 }} />
                                         {suggestion}
                                     </div>
                                 ))}
@@ -295,29 +308,11 @@ const BudgetPanel = ({ activePlan, isOpen = true, onToggle, width = 300, onResiz
                     </div>
                 </>
             ) : (
-                <div
-                    style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        height: '100%',
-                        width: '100%',
-                        gap: '20px',
-                        cursor: 'pointer'
-                    }}
-                    onClick={onToggle}
-                >
-                    <Wallet size={20} color="var(--accent-color)" />
-                    <div style={{
-                        writingMode: 'vertical-rl',
-                        fontSize: '12px',
-                        color: 'var(--text-secondary)',
-                        letterSpacing: '0.1em',
-                        fontWeight: 500
-                    }}>
-                        账本
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', cursor: 'pointer', gap: '16px' }} onClick={onToggle}>
+                    <div className="premium-gradient" style={{ width: '42px', height: '42px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 15px var(--accent-glow)' }}>
+                        <Wallet size={20} color="white" />
                     </div>
+                    <div style={{ writingMode: 'vertical-rl', fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)', letterSpacing: '0.2em' }}>财务预算</div>
                 </div>
             )}
         </motion.aside>

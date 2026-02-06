@@ -5,11 +5,9 @@ import MagicBox from './components/MagicBox';
 import SettingsPanel from './components/SettingsPanel';
 import RecommendationsPanel from './components/RecommendationsPanel';
 import BudgetPanel from './components/BudgetPanel';
-import TravelRecordsPanel from './components/TravelRecordsPanel';
 import PlanningModal from './components/PlanningModal';
-import EditorPanel from './components/EditorPanel';
 import { callAIService } from './services/aiService';
-import { User, Bell, LayoutGrid, Settings, AlertTriangle } from 'lucide-react';
+import { Bell, Settings, AlertTriangle } from 'lucide-react';
 
 // Simple ErrorBoundary Component
 class ErrorBoundary extends React.Component {
@@ -17,9 +15,8 @@ class ErrorBoundary extends React.Component {
     super(props);
     this.state = { hasError: false };
   }
-  static getDerivedStateFromError(err) { return { hasError: true }; }
+  static getDerivedStateFromError() { return { hasError: true }; }
   componentDidCatch(err, errorInfo) { console.error("App Error:", err, errorInfo); }
-
 
   render() {
     if (this.state.hasError) {
@@ -35,7 +32,6 @@ class ErrorBoundary extends React.Component {
   }
 }
 
-
 function App() {
   const [showResult, setShowResult] = useState(false);
   const [resultText, setResultText] = useState('');
@@ -45,13 +41,11 @@ function App() {
   const [mapCenter, setMapCenter] = useState({ lat: 34.992, lng: 135.772 }); // Initial focus on Four Seasons area
 
   const [activePlan, setActivePlan] = useState({
-
     destination: 'Kyoto, Japan',
     days: 5,
     hotelTier: '精品',
     waypoints: ['清水寺', '岚山竹林', '伏见稻荷']
   });
-
 
   // Persist sidebar states to localStorage - Default to CLOSED for result-first UI
   const [isLeftPanelOpen, setIsLeftPanelOpen] = useState(() => {
@@ -77,26 +71,26 @@ function App() {
   const toggleLeftPanel = () => {
     const newState = !isLeftPanelOpen;
     setIsLeftPanelOpen(newState);
-    localStorage.setItem('leftPanelOpen', JSON.stringify(newState));
+    localStorage.setItem('isLeftPanelOpen', JSON.stringify(newState));
   };
   const toggleRightPanel = () => {
     const newState = !isRightPanelOpen;
     setIsRightPanelOpen(newState);
-    localStorage.setItem('rightPanelOpen', JSON.stringify(newState));
+    localStorage.setItem('isRightPanelOpen', JSON.stringify(newState));
   };
 
   // Resize handlers
   const handleLeftResize = (newWidth) => {
     if (newWidth < 100) {
       setIsLeftPanelOpen(false);
-      localStorage.setItem('leftPanelOpen', JSON.stringify(false));
+      localStorage.setItem('isLeftPanelOpen', JSON.stringify(false));
     } else {
       const clampedWidth = Math.min(Math.max(newWidth, 200), 500);
       setLeftPanelWidth(clampedWidth);
       localStorage.setItem('leftPanelWidth', clampedWidth.toString());
       if (!isLeftPanelOpen) {
         setIsLeftPanelOpen(true);
-        localStorage.setItem('leftPanelOpen', JSON.stringify(true));
+        localStorage.setItem('isLeftPanelOpen', JSON.stringify(true));
       }
     }
   };
@@ -104,14 +98,14 @@ function App() {
   const handleRightResize = (newWidth) => {
     if (newWidth < 100) {
       setIsRightPanelOpen(false);
-      localStorage.setItem('rightPanelOpen', JSON.stringify(false));
+      localStorage.setItem('isRightPanelOpen', JSON.stringify(false));
     } else {
       const clampedWidth = Math.min(Math.max(newWidth, 200), 500);
       setRightPanelWidth(clampedWidth);
       localStorage.setItem('rightPanelWidth', clampedWidth.toString());
       if (!isRightPanelOpen) {
         setIsRightPanelOpen(true);
-        localStorage.setItem('rightPanelOpen', JSON.stringify(true));
+        localStorage.setItem('isRightPanelOpen', JSON.stringify(true));
       }
     }
   };
@@ -138,13 +132,11 @@ function App() {
     localStorage.setItem('ai_travel_config', JSON.stringify(newConfig));
   };
 
-
   const handleCommand = async (cmd) => {
     try {
       const result = await callAIService(cmd, aiConfig);
       setResultText(result);
       setShowResult(true);
-      // Simulate extraction of structured data for the Editor - preserve existing data
       setActivePlan(prev => ({ ...prev, destination: 'Kyoto, Japan' }));
     } catch (error) {
       alert(error.message);
@@ -153,98 +145,123 @@ function App() {
 
   const handleScenarioChange = (newScenario) => {
     setScenario(newScenario);
-    setIsPlanningModalOpen(true); // Open modal when scenario button is clicked
+    setIsPlanningModalOpen(true);
   };
 
   return (
     <ErrorBoundary>
       <div className="app-root">
-
         {/* Fixed Top Navigation Bar */}
         <div style={{
           position: 'fixed',
           top: 0,
           left: 0,
           right: 0,
-          height: '60px',
-          background: 'transparent',
-          borderBottom: '1px solid transparent',
+          height: '70px',
+          background: 'rgba(5, 5, 6, 0.4)',
+          backdropFilter: 'blur(20px)',
+          borderBottom: '1px solid var(--border-color)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          padding: '0 24px',
+          padding: '0 32px',
           zIndex: 1000
         }}>
           {/* Left: Logo & App Name */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div style={{
-              width: '32px',
-              height: '32px',
-              background: 'linear-gradient(135deg, var(--accent-color), #818cf8)',
-              borderRadius: '8px',
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <div className="premium-gradient" style={{
+              width: '40px',
+              height: '40px',
+              borderRadius: '12px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontSize: '18px'
+              fontSize: '20px'
             }}>
               ✈️
             </div>
-            <span style={{ fontSize: '16px', fontWeight: 600 }}>AI 旅游助手</span>
+            <div>
+              <div style={{ fontSize: '18px', fontWeight: 700, letterSpacing: '-0.02em', color: 'white' }}>AI 游</div>
+              <div style={{ fontSize: '10px', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Next-gen Travel</div>
+            </div>
           </div>
 
           {/* Right: User Menu */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            <button
-              onClick={() => setIsSettingsOpen(true)}
-              style={{
-                background: 'transparent',
-                border: 'none',
-                color: 'var(--text-secondary)',
-                cursor: 'pointer',
-                padding: '8px',
-                borderRadius: '8px',
-                transition: 'all 0.2s'
-              }}
-              onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.05)'}
-              onMouseLeave={(e) => e.currentTarget.style.background = 'transparent'}
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="12" cy="12" r="3" />
-                <path d="M12 1v6m0 6v6m9-9h-6m-6 0H3" />
-              </svg>
-            </button>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button
+                onClick={() => setIsSettingsOpen(true)}
+                style={{
+                  background: 'rgba(255,255,255,0.05)',
+                  border: '1px solid var(--border-color)',
+                  color: 'white',
+                  cursor: 'pointer',
+                  width: '38px',
+                  height: '38px',
+                  borderRadius: '10px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  transition: 'var(--transition)'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'rgba(255,255,255,0.1)';
+                  e.currentTarget.style.borderColor = 'var(--accent-color)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'rgba(255,255,255,0.05)';
+                  e.currentTarget.style.borderColor = 'var(--border-color)';
+                }}
+              >
+                <Settings size={18} />
+              </button>
+              <button
+                style={{
+                  background: 'rgba(255,255,255,0.05)',
+                  border: '1px solid var(--border-color)',
+                  color: 'white',
+                  cursor: 'pointer',
+                  width: '38px',
+                  height: '38px',
+                  borderRadius: '10px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  transition: 'var(--transition)'
+                }}
+              >
+                <Bell size={18} />
+              </button>
+            </div>
+
             <div style={{
-              width: '32px',
-              height: '32px',
-              borderRadius: '50%',
-              background: 'linear-gradient(135deg, #f59e0b, #f97316)',
+              width: '42px',
+              height: '42px',
+              borderRadius: '14px',
+              background: 'linear-gradient(135deg, #f59e0b, #ec4899)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontSize: '14px',
-              fontWeight: 600,
-              cursor: 'pointer'
+              fontSize: '16px',
+              fontWeight: 700,
+              cursor: 'pointer',
+              border: '2px solid rgba(255,255,255,0.1)',
+              boxShadow: '0 4px 15px rgba(0,0,0,0.3)'
             }}>
-              U
+              JD
             </div>
           </div>
         </div>
 
-        {/* Main Workbench - full height */}
+        {/* Main Workbench */}
         <div className="workbench">
-          {/* 1. Left: Recommendations & Experience */}
           <RecommendationsPanel
             isOpen={isLeftPanelOpen}
             onToggle={toggleLeftPanel}
             width={leftPanelWidth}
             onResize={handleLeftResize}
           />
-
-          {/* 2. Middle: Visualizer (includes Map + Studio + Travel Records modes) */}
           <Visualizer center={mapCenter} />
-
-
-          {/* 3. Right: Budget Panel */}
           <BudgetPanel
             activePlan={activePlan}
             isOpen={isRightPanelOpen}
@@ -254,26 +271,27 @@ function App() {
           />
         </div>
 
-        {/* Overlays - Positioned outside grid flow */}
+        {/* Overlays */}
         <div className="overlays">
-          {/* Main AI Interaction Box - Focused at the bottom */}
           <MagicBox
             onCommand={handleCommand}
             onScenarioChange={handleScenarioChange}
             activeScenario={scenario}
             onMapFocus={setMapCenter}
           />
-
-
-          {/* Settings Panel Overlay */}
           <SettingsPanel
             isOpen={isSettingsOpen}
             onClose={() => setIsSettingsOpen(false)}
             config={aiConfig}
             onUpdateConfig={handleUpdateConfig}
           />
-
-          {/* Legacy Slide-over Panel (Optional for detailed AI text) */}
+          <PlanningModal
+            isOpen={isPlanningModalOpen}
+            onClose={() => setIsPlanningModalOpen(false)}
+            scenario={scenario}
+            activePlan={activePlan}
+            onUpdate={setActivePlan}
+          />
           <AnimatePresence>
             {showResult && (
               <motion.div
@@ -321,6 +339,5 @@ function App() {
     </ErrorBoundary>
   );
 }
-
 
 export default App;
